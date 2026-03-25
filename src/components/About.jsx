@@ -127,8 +127,7 @@ export default function About() {
             Qui suis-<span className="gradient-text">je</span> ?
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-            Développeur passionné, curieux et rigoureux, je construis des solutions
-            qui allient performance et expérience utilisateur.
+             Étudiant passionné par l'informatique, curieux et rigoureux, je m'efforce de développer mes compétences en concevant des programmes et des applications
           </p>
         </motion.div>
 

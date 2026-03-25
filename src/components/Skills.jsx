@@ -12,7 +12,7 @@ const skillCategories = [
       { name: 'C / C++', level: 70, icon: '⚙️' },
       { name: 'JavaScript', level: 65, icon: '🟡' },
       { name: 'PHP', level: 55, icon: '🐘' },
-      { name: 'Flutter / Dart', level: 50, icon: '💙' },
+      { name: 'Flutter ', level: 20, icon: '💙' },
     ],
   },
   {
@@ -44,7 +44,7 @@ const skillCategories = [
       { name: 'Git / GitHub', level: 75, icon: '🔀' },
       { name: 'Linux / Shell', level: 65, icon: '🐧' },
       { name: 'Docker', level: 20, icon: '🐳' },
-      { name: 'Postman', level: 60, icon: '📮' },
+      { name: 'Postman', level: 20, icon: '📮' },
       { name: 'Trello', level: 20, icon: '📌' },
     ],
   },

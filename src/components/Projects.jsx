@@ -17,7 +17,6 @@ const LANGUAGE_COLORS = {
   PHP: '#777bb4',
   HTML: '#e34c26',
   CSS: '#264de4',
-  Dart: '#00b4ab',
   Java: '#b07219',
   Shell: '#89e051',
   SQL: '#e38c00',
