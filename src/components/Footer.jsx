@@ -19,7 +19,7 @@ export default function Footer() {
         </div>
 
         <p className="text-slate-500 text-sm flex items-center gap-1">
-          Fait avec <Heart size={12} className="text-red-400 fill-red-400" />
+          contact 
         </p>
 
         <div className="flex items-center gap-4">

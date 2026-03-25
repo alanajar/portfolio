@@ -1,6 +1,12 @@
-import { useEffect, useState, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { Github, Star, GitFork, ExternalLink, Code2 } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { Github, ChevronDown, ChevronUp, Image, X, ZoomIn } from 'lucide-react'
+import imgBiblio from '../assets/biblio.png'
+import imgS104 from '../assets/s1.04_manipulation_de_base_de_donn-e.png'
+import imgSiteAmu from '../assets/site_amu.png'
+import imgTodo from '../assets/mon_to_do_list.png'
+import pdfReport from '../assets/report.pdf'
 
 const LANGUAGE_COLORS = {
   JavaScript: '#f7df1e',
@@ -15,185 +21,275 @@ const LANGUAGE_COLORS = {
   Java: '#b07219',
   Shell: '#89e051',
   SQL: '#e38c00',
+  Makefile: '#427819',
+  'Jupyter Notebook': '#DA5B0B',
+  Sage: '#6a9a4d',
+  Bootstrap: '#7952b3',
+  React: '#61dafb',
   Default: '#6b7280',
 }
 
-const FEATURED_PROJECTS = [
+const PROJECTS = [
   {
-    id: 'nuit-info',
-    name: 'Nuit de l\'Info 2025',
+    id: 'bibliotheque-cpp',
+    name: 'SAÉ S1.01 — Gestion de Bibliothèque',
+    languages: ['C++', 'Makefile'],
     description:
-      'Hackathon international en Tunisie — défis techniques complexes résolus en une nuit, collaboration intensive en équipe, résolution de problématiques algorithmiques sous contrainte de temps.',
-    topics: ['hackathon', 'teamwork', 'algorithmique'],
-    language: 'JavaScript',
-    gradient: 'from-indigo-600 to-cyan-500',
-    repoSlug: 'nuit-info-2025',
-    emoji: '🌙',
+      "Application console de gestion de bibliothèque en C++. Structure avec dossiers séparés pour les fichiers source (.cpp) et les headers (.hpp).",
+    github: 'https://github.com/alanajar/biblioth-quec-',
+    image: imgBiblio,
+    expandType: 'image',
+    gradient: 'from-rose-600 to-indigo-600',
+    emoji: '📚',
   },
   {
-    id: 'programmation-systeme',
-    name: 'Programmation Système',
+    id: 'algorithmes-tri',
+    name: 'SAÉ S1.02 — Démonstration d\'Algorithmes de Tri',
+    languages: ['C++', 'Python', 'Jupyter Notebook', 'Sage', 'Shell'],
     description:
-      'Outils de gestion de données en C/C++ et Python avec optimisation de la gestion mémoire, structures de données avancées et algorithmes de tri/recherche.',
-    topics: ['c', 'cpp', 'python', 'memory-management'],
-    language: 'C++',
-    gradient: 'from-violet-600 to-indigo-500',
-    repoSlug: 'programmation-systeme',
-    emoji: '⚙️',
+      "Comparaison de six algorithmes de tri (bulle, insertion, sélection, quicksort, quicksort aléatoire, std::sort) sur des tableaux de 1 000 à 100 000 éléments. Mesure du temps et du nombre de comparaisons.",
+    github: 'https://github.com/alanajar/S1.02-D-monstration-d-algorithmes',
+    pdfUrl: pdfReport,
+    expandType: 'pdf',
+    gradient: 'from-violet-600 to-cyan-500',
+    emoji: '📊',
   },
   {
-    id: 'gestion-donnees',
-    name: 'Gestion de Données',
+    id: 'base-de-donnees',
+    name: 'SAÉ S1.04 — Manipulation de Base de Données',
+    languages: ['SQL'],
     description:
-      'Conception de schémas relationnels (Merise/UML) et requêtage SQL optimisé — modélisation, normalisation, requêtes complexes avec jointures et sous-requêtes.',
-    topics: ['sql', 'postgresql', 'mysql', 'database'],
-    language: 'SQL',
+      "Travaux pratiques de base de données relationnelle PostgreSQL. Modélisation, normalisation et requêtes avancées sur une base commerciale (clients, articles, commandes, livraisons).",
+    github: 'https://github.com/alanajar/s1.04_manipulation_de_base_de_donn-e',
+    image: imgS104,
+    expandType: 'image',
     gradient: 'from-cyan-600 to-teal-500',
-    repoSlug: 'gestion-donnees',
     emoji: '🗄️',
   },
   {
-    id: 'logique-applicative',
-    name: 'Logique Applicative',
+    id: 'site-amu',
+    name: 'SAÉ S1.06 — Site Vitrine BUT Informatique IUT Arles',
+    languages: ['HTML', 'CSS', 'Bootstrap'],
     description:
-      'Développement de modules fonctionnels et algorithmes de traitement — logique métier, patterns de conception, modules réutilisables en Python et JavaScript.',
-    topics: ['python', 'javascript', 'algorithms'],
-    language: 'Python',
+      "Site vitrine présentant le BUT Informatique du site d'Arles (IUT Aix-Marseille). Présentation de la formation, compétences, parcours, métiers et SAÉ.",
+    github: 'https://github.com/alanajar/site_pour_amu',
+    image: imgSiteAmu,
+    expandType: 'image',
+    gradient: 'from-indigo-600 to-violet-500',
+    emoji: '🌐',
+  },
+  {
+    id: 'todo-list',
+    name: 'Application To-Do List',
+    languages: ['TypeScript', 'React', 'JavaScript', 'CSS'],
+    description:
+      "Application de gestion de tâches développée avec React et TypeScript. Interface moderne avec Vite comme bundler.",
+    github: 'https://github.com/alanajar/mon_to_do_list',
+    image: imgTodo,
+    expandType: 'image',
     gradient: 'from-amber-500 to-orange-600',
-    repoSlug: 'logique-applicative',
-    emoji: '🧩',
+    emoji: '✅',
   },
 ]
 
-function LanguageDot({ lang }) {
+function ImagePlaceholder() {
+  return (
+    <div
+      className="w-full h-64 rounded-xl flex flex-col items-center justify-center gap-3"
+      style={{
+        background: 'linear-gradient(135deg, rgba(79,70,229,0.15), rgba(124,58,237,0.15))',
+        border: '1px dashed rgba(79,70,229,0.3)',
+      }}
+    >
+      <Image size={40} className="text-indigo-400 opacity-50" />
+      <span className="text-slate-400 text-sm">Image à venir</span>
+    </div>
+  )
+}
+
+function PdfViewer({ url }) {
+  return (
+    <div className="w-full rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+      <embed
+        src={url}
+        type="application/pdf"
+        className="w-full"
+        style={{ height: '500px' }}
+      />
+    </div>
+  )
+}
+
+function Lightbox({ src, alt, onClose }) {
+  return createPortal(
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[9998] flex items-center justify-center p-4"
+        style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(8px)' }}
+        onClick={onClose}
+      >
+        <button
+          className="absolute top-5 right-5 z-[9999] w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors"
+          style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}
+          onClick={onClose}
+        >
+          <X size={20} />
+        </button>
+        <motion.img
+          src={src}
+          alt={alt}
+          initial={{ scale: 0.85, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.85, opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="max-w-full max-h-[90vh] rounded-xl object-contain shadow-2xl"
+          onClick={e => e.stopPropagation()}
+        />
+      </motion.div>
+    </AnimatePresence>,
+    document.body
+  )
+}
+
+function LanguageBadge({ lang }) {
   const color = LANGUAGE_COLORS[lang] || LANGUAGE_COLORS.Default
   return (
-    <span className="flex items-center gap-1.5 text-xs text-slate-400">
-      <span className="w-2.5 h-2.5 rounded-full" style={{ background: color }} />
+    <span
+      className="text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5"
+      style={{
+        background: color + '20',
+        color: color,
+        border: '1px solid ' + color + '44',
+      }}
+    >
+      <span className="w-2 h-2 rounded-full" style={{ background: color }} />
       {lang}
     </span>
   )
 }
 
-function ProjectGradientCard({ project, repoData }) {
+function ProjectCard({ project, index }) {
+  const [expanded, setExpanded] = useState(false)
+  const [lightbox, setLightbox] = useState(false)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
-
-  const language = repoData?.language || project.language
-  const description = repoData?.description || project.description
-  const stars = repoData?.stargazers_count || 0
-  const forks = repoData?.forks_count || 0
-  const githubUrl = repoData?.html_url || `https://github.com/alanajar/${project.repoSlug}`
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: 0.1 }}
-      className="project-card glass-card rounded-2xl overflow-hidden group"
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="glass-card rounded-2xl overflow-hidden group"
+      style={{ borderColor: 'rgba(79,70,229,0.15)' }}
     >
-      {/* Gradient banner */}
+      {/* Gradient header */}
       <div
-        className={`relative h-40 bg-gradient-to-br ${project.gradient} flex items-center justify-center overflow-hidden`}
+        className={`relative h-32 bg-gradient-to-br ${project.gradient} flex items-center justify-center overflow-hidden`}
       >
-        <div className="absolute inset-0 opacity-20"
+        <div
+          className="absolute inset-0 opacity-20"
           style={{
             backgroundImage: 'radial-gradient(circle at 30% 50%, white 1px, transparent 1px)',
             backgroundSize: '20px 20px',
           }}
         />
-        <span className="text-6xl select-none" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))' }}>
+        <span className="text-5xl select-none" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))' }}>
           {project.emoji}
         </span>
-        {/* Language badge */}
-        {language && (
-          <div
-            className="absolute top-3 right-3 text-xs px-2.5 py-1 rounded-full font-medium"
-            style={{
-              background: (LANGUAGE_COLORS[language] || '#6b7280') + '33',
-              border: '1px solid ' + (LANGUAGE_COLORS[language] || '#6b7280') + '66',
-              color: LANGUAGE_COLORS[language] || '#9ca3af',
-              backdropFilter: 'blur(8px)',
-            }}
-          >
-            {language}
-          </div>
-        )}
       </div>
 
-      {/* Card body */}
+      {/* Body */}
       <div className="p-5">
-        <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-indigo-300 transition-colors">
+        <h3 className="text-white font-semibold text-lg mb-3 group-hover:text-indigo-300 transition-colors">
           {project.name}
         </h3>
-        <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">{description}</p>
 
-        {/* Topics */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {project.topics.map(t => (
-            <span key={t} className="tech-badge">{t}</span>
+        {/* Language badges */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {project.languages.map(lang => (
+            <LanguageBadge key={lang} lang={lang} />
           ))}
         </div>
 
-        {/* Stats & links */}
-        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-xs text-slate-500">
-              <Star size={12} /> {stars}
-            </span>
-            <span className="flex items-center gap-1 text-xs text-slate-500">
-              <GitFork size={12} /> {forks}
-            </span>
-          </div>
-          <a
-            href={githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+        {/* Description */}
+        <p className="text-slate-400 text-sm leading-relaxed mb-4">{project.description}</p>
+
+        {/* Buttons */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setExpanded(v => !v)}
+            className="flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-lg transition-all duration-200"
+            style={{
+              background: expanded ? 'rgba(79,70,229,0.2)' : 'rgba(79,70,229,0.12)',
+              color: '#a5b4fc',
+              border: '1px solid rgba(79,70,229,0.3)',
+            }}
             data-hover
           >
-            <Github size={13} /> Voir sur GitHub
+            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {expanded ? 'Fermer' : 'Voir le projet'}
+          </button>
+
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs font-medium px-4 py-2 rounded-lg transition-all duration-200"
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              color: '#94a3b8',
+              border: '1px solid rgba(255,255,255,0.1)',
+            }}
+            data-hover
+          >
+            <Github size={14} />
+            Code source
           </a>
         </div>
+
+        {/* Expanded content */}
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
+              <div className="pt-5 mt-5 border-t border-white/5">
+                {project.expandType === 'pdf' ? (
+                  <PdfViewer url={project.pdfUrl} />
+                ) : project.image ? (
+                  <div className="relative group/img cursor-zoom-in" onClick={() => setLightbox(true)}>
+                    <img
+                      src={project.image}
+                      alt={project.name}
+                      className="w-full rounded-xl object-cover"
+                      style={{ maxHeight: '400px' }}
+                    />
+                    <div className="absolute inset-0 rounded-xl flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200"
+                      style={{ background: 'rgba(0,0,0,0.4)' }}>
+                      <ZoomIn size={36} className="text-white" />
+                    </div>
+                  </div>
+                ) : (
+                  <ImagePlaceholder />
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+
+      {lightbox && project.image && (
+        <Lightbox src={project.image} alt={project.name} onClose={() => setLightbox(false)} />
+      )}
     </motion.div>
-  )
-}
-
-function RepoCard({ repo, index }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-40px' })
-
-  return (
-    <motion.a
-      ref={ref}
-      href={repo.html_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, x: -20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.4, delay: index * 0.06 }}
-      className="glass-card rounded-xl p-4 flex items-start gap-3 group hover:border-indigo-500/30 transition-all duration-300"
-      data-hover
-    >
-      <Code2 size={16} className="text-indigo-400 mt-0.5 flex-shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-white text-sm font-medium group-hover:text-indigo-300 transition-colors truncate">
-          {repo.name}
-        </p>
-        {repo.description && (
-          <p className="text-slate-500 text-xs mt-0.5 line-clamp-1">{repo.description}</p>
-        )}
-        <div className="flex items-center gap-3 mt-2">
-          {repo.language && <LanguageDot lang={repo.language} />}
-          <span className="flex items-center gap-1 text-xs text-slate-500">
-            <Star size={10} /> {repo.stargazers_count}
-          </span>
-        </div>
-      </div>
-      <ExternalLink size={12} className="text-slate-600 group-hover:text-slate-400 flex-shrink-0 mt-1" />
-    </motion.a>
   )
 }
 
@@ -208,27 +304,8 @@ function SectionLabel({ children }) {
 }
 
 export default function Projects() {
-  const [repos, setRepos] = useState([])
-  const [loading, setLoading] = useState(true)
   const titleRef = useRef(null)
   const inView = useInView(titleRef, { once: true })
-
-  useEffect(() => {
-    fetch('https://api.github.com/users/alanajar/repos?sort=updated&per_page=20')
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) setRepos(data)
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
-
-  const getRepoData = (slug) =>
-    repos.find(r => r.name.toLowerCase().includes(slug.toLowerCase()))
-
-  const otherRepos = repos.filter(
-    r => !FEATURED_PROJECTS.some(p => r.name.toLowerCase().includes(p.repoSlug.toLowerCase()))
-  )
 
   return (
     <section id="projects" className="relative z-10 py-28">
@@ -246,68 +323,35 @@ export default function Projects() {
             Mes <span className="gradient-text">projets</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">
-            Projets académiques et personnels — données en temps réel via l'API GitHub.
+            Projets académiques et personnels — cliquez sur "Voir le projet" pour découvrir les détails.
           </p>
         </motion.div>
 
-        {/* Featured projects */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 mb-16">
-          {FEATURED_PROJECTS.map((project, i) => (
-            <ProjectGradientCard
-              key={project.id}
-              project={project}
-              repoData={getRepoData(project.repoSlug)}
-            />
+        {/* Project cards */}
+        <div className="grid sm:grid-cols-2 gap-6 mb-10">
+          {PROJECTS.map((project, i) => (
+            <ProjectCard key={project.id} project={project} index={i} />
           ))}
         </div>
 
-        {/* All GitHub repos */}
-        {!loading && otherRepos.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+        {/* GitHub link */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center"
+        >
+          <a
+            href="https://github.com/alanajar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline"
+            data-hover
           >
-            <h3 className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
-              <Github size={18} className="text-slate-400" />
-              Tous les dépôts GitHub
-            </h3>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {otherRepos.map((repo, i) => (
-                <RepoCard key={repo.id} repo={repo} index={i} />
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {loading && (
-          <div className="text-center py-8">
-            <div className="inline-flex items-center gap-2 text-slate-500 text-sm">
-              <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-              Chargement des dépôts GitHub...
-            </div>
-          </div>
-        )}
-
-        {!loading && repos.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mt-10"
-          >
-            <a
-              href="https://github.com/alanajar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-outline"
-              data-hover
-            >
-              <Github size={16} />
-              Voir tous les projets sur GitHub
-            </a>
-          </motion.div>
-        )}
+            <Github size={16} />
+            Voir tous les projets sur GitHub
+          </a>
+        </motion.div>
       </div>
     </section>
   )

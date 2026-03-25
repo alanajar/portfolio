@@ -36,6 +36,17 @@ const associations = [
     tags: ['Rigueur', 'Sport', 'Règles', 'Gestion de conflit'],
     highlight: 'Licence officielle',
   },
+  {
+    name: 'La Nuit de l\'Info',
+    fullName: 'Hackathon National',
+    role: 'Participant',
+    description:
+      "Participation au hackathon national La Nuit de l'Info — une nuit entière de développement en équipe pour relever des défis informatiques.",
+    icon: '💻',
+    color: '#7c3aed',
+    tags: ['Hackathon', 'Développement', 'Équipe', 'Défis'],
+    highlight: 'Hackathon national',
+  },
 ]
 
 function AssociationCard({ item, index }) {
@@ -141,7 +152,7 @@ export default function Associations() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {associations.map((item, i) => (
             <AssociationCard key={item.name} item={item} index={i} />
           ))}
@@ -164,7 +175,7 @@ export default function Associations() {
             {[
               '🤝 Travail en équipe', '🎯 Rigueur', '⚡ Réactivité',
               '🌍 Ouverture internationale', '🧠 Esprit critique', '📋 Organisation',
-              '🗣️ Communication', '⚖️ Impartialité', '💡 Adaptabilité',
+              '🗣️ Communication', '💡 Adaptabilité',
             ].map(skill => (
               <span
                 key={skill}

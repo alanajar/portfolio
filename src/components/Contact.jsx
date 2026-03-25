@@ -236,7 +236,7 @@ export default function Contact() {
           className="text-center mb-14"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Travaillons <span className="gradient-text">ensemble</span>
+            Restons en <span className="gradient-text">contact</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">
             Disponible pour une alternance à partir de septembre 2026. N'hésitez pas à me contacter !
@@ -253,7 +253,7 @@ export default function Contact() {
             <div className="glass-card rounded-2xl p-6 mb-6" style={{ borderColor: 'rgba(79,70,229,0.2)' }}>
               <h3 className="text-white font-semibold mb-2 text-lg">🎯 Ce que je recherche</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Une alternance en <strong className="text-indigo-300">Conception & Développement d'Applications</strong> sur
+                Une alternance en <strong className="text-indigo-300">Réalisation & Conception d'Applications</strong> sur
                 la région d'Aix-en-Provence / Marseille. Passionné, rigoureux et toujours prêt à apprendre.
               </p>
             </div>

@@ -43,9 +43,9 @@ const skillCategories = [
     skills: [
       { name: 'Git / GitHub', level: 75, icon: '🔀' },
       { name: 'Linux / Shell', level: 65, icon: '🐧' },
-      { name: 'Docker', level: 50, icon: '🐳' },
+      { name: 'Docker', level: 20, icon: '🐳' },
       { name: 'Postman', level: 60, icon: '📮' },
-      { name: 'Trello', level: 70, icon: '📌' },
+      { name: 'Trello', level: 20, icon: '📌' },
     ],
   },
   {

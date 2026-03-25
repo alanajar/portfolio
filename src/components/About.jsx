@@ -24,7 +24,7 @@ const timeline = [
     year: '2025 – 2026',
     title: 'BUT Informatique 1ère année',
     place: "IUT d'Arles — Aix-Marseille Université",
-    detail: 'Parcours : Conception et Développement d\'Applications (CDA)',
+    detail: 'Parcours : Réalisation et Conception d\'Applications (RCDA)',
     color: '#4f46e5',
     icon: '🚀',
     current: true,
@@ -147,7 +147,7 @@ export default function About() {
             <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-top" />
           </div>
           <h3 className="text-2xl font-bold text-white mb-1">Ala NAJAR</h3>
-          <p className="text-slate-400 text-sm mb-2">Étudiant BUT Informatique · CDA</p>
+          <p className="text-slate-400 text-sm mb-2">Étudiant BUT Informatique · RCDA</p>
           <div className="flex items-center justify-center gap-1">
             <MapPin size={13} className="text-cyan-400" />
             <span className="text-xs text-slate-500">Avignon · Mobilité Aix-en-Provence</span>

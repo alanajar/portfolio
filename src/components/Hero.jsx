@@ -9,7 +9,7 @@ const WORDS = [
   'Développeur Fullstack',
   'Étudiant BUT Informatique',
   'Passionné par la programation et la développement',
-  'Futur Alternant CDA',
+  'Futur Alternant RCDA',
 ]
 
 function TypewriterText() {
@@ -174,7 +174,7 @@ export default function Hero() {
             { value: '16.49', label: 'Moyenne Bac' },
             { value: '15.5', label: 'Moyenne L1' },
             { value: '5+', label: 'Projets' },
-            { value: '3', label: 'Langues' },
+            { value: '4', label: 'Langues' },
           ].map(({ value, label }) => (
             <div key={label}>
               <div className="text-2xl font-bold gradient-text">{value}</div>

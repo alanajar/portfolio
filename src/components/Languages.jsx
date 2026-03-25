@@ -26,6 +26,14 @@ const languages = [
     cert: 'EF SET',
     color: '#7c3aed',
   },
+  {
+    name: 'Italien',
+    level: 45,
+    label: 'Niveau B1',
+    flag: '🇮🇹',
+    cert: 'Scolaire',
+    color: '#059669',
+  },
 ]
 
 const R = 54
@@ -140,7 +148,7 @@ export default function Languages() {
         </div>
 
         {/* Info cards */}
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
           {languages.map((lang, i) => (
             <motion.div
               key={lang.name}
