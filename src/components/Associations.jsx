@@ -38,7 +38,7 @@ const associations = [
   },
   {
     name: 'La Nuit de l\'Info',
-    fullName: 'Hackathon National',
+    fullName: 'Hackathon International',
     role: 'Participant',
     description:
       "Participation au hackathon national La Nuit de l'Info — une nuit entière de développement en équipe pour relever des défis informatiques.",
