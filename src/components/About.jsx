@@ -167,7 +167,7 @@ export default function About() {
             utiles et bien conçus.
           </p>
           <p className="text-slate-300 text-sm leading-relaxed">
-            Boursier d'excellence, j'ai choisi le parcours CDA du BUT Informatique pour
+            j'ai choisi le parcours RCDA du BUT Informatique pour
             me spécialiser dans la conception et le développement d'applications. Je recherche
             une alternance pour mettre en pratique mes compétences dans un contexte professionnel.
           </p>
