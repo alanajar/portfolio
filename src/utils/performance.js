@@ -28,3 +28,20 @@ function detectLowPerf() {
 }
 
 export const LOW_PERF = detectLowPerf()
+
+// WebGL disponible tout court (même lent) : sert à choisir entre la scène 3D
+// (complète ou allégée selon LOW_PERF) et la version canvas 2D
+function detectWebGL() {
+  if (typeof window === 'undefined') return false
+  try {
+    const canvas = document.createElement('canvas')
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl')
+    if (!gl) return false
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    return true
+  } catch {
+    return false
+  }
+}
+
+export const HAS_WEBGL = detectWebGL()

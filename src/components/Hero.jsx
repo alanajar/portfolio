@@ -2,11 +2,12 @@ import { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Github, Mail, ChevronDown, ExternalLink } from 'lucide-react'
 import { lazy, Suspense } from 'react'
-import { LOW_PERF } from '../utils/performance'
+import { LOW_PERF, HAS_WEBGL } from '../utils/performance'
+import NeuralCanvas2D from './NeuralCanvas2D'
 
 const HeroScene = lazy(() => import('./HeroScene'))
 
-// Fond statique utilisé à la place de la scène 3D sur les machines lentes
+// Halo coloré toujours présent derrière l'animation
 function StaticHeroBackground() {
   return (
     <div
@@ -76,7 +77,6 @@ function GlitchTitle({ text }) {
 export default function Hero() {
   const sectionRef = useRef(null)
   const [visible, setVisible] = useState(true)
-  const [use3D, setUse3D] = useState(!LOW_PERF)
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting))
@@ -98,14 +98,15 @@ export default function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ background: '#0a0a0f' }}
     >
-      {/* 3D Scene (ou fond statique si la machine est trop lente) */}
+      {/* Animation IA & dev : 3D (allégée sur machine lente), ou canvas 2D sans WebGL */}
       <div className="absolute inset-0 z-0">
-        {use3D ? (
-          <Suspense fallback={<StaticHeroBackground />}>
-            <HeroScene active={visible} onFallback={() => setUse3D(false)} />
+        <StaticHeroBackground />
+        {HAS_WEBGL ? (
+          <Suspense fallback={null}>
+            <HeroScene active={visible} lite={LOW_PERF} />
           </Suspense>
         ) : (
-          <StaticHeroBackground />
+          <NeuralCanvas2D active={visible} />
         )}
       </div>
 
@@ -114,7 +115,7 @@ export default function Hero() {
         className="absolute inset-0 z-[1]"
         style={{
           background:
-            'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(79,70,229,0.12) 0%, rgba(10,10,15,0.6) 60%, rgba(10,10,15,0.95) 100%)',
+            'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(10,10,15,0.35) 0%, rgba(10,10,15,0.45) 60%, rgba(10,10,15,0.9) 100%)',
         }}
       />
 
@@ -133,7 +134,7 @@ export default function Hero() {
           }}
         >
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          Disponible pour une alternance —
+          Disponible pour un stage de 3 mois —
         </motion.div>
 
         {/* Main title */}

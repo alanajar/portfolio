@@ -239,7 +239,7 @@ export default function Contact() {
             Restons en <span className="gradient-text">contact</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">
-            Disponible pour une alternance à partir de septembre 2026. N'hésitez pas à me contacter !
+            Disponible pour un stage à partir du 29 mars au 18 juin 2027. N'hésitez pas à me contacter !
           </p>
         </motion.div>
 

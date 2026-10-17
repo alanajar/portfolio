@@ -148,10 +148,10 @@ export default function About() {
           className="flex flex-col items-center text-center mb-12"
         >
           <div
-            className="w-28 h-28 rounded-2xl overflow-hidden mb-5"
+            className="w-36 aspect-[4/5] rounded-2xl overflow-hidden mb-5"
             style={{ boxShadow: '0 0 40px rgba(79,70,229,0.4), 0 0 0 3px #4f46e5' }}
           >
-            <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-top" />
+            <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-center" />
           </div>
           <h3 className="text-2xl font-bold text-white mb-1">Ala NAJAR</h3>
           <p className="text-slate-400 text-sm mb-2">Étudiant BUT Informatique · RCDA</p>

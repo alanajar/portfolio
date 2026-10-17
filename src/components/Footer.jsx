@@ -13,7 +13,7 @@ export default function Footer() {
             className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0"
             style={{ boxShadow: '0 0 0 1px #4f46e5' }}
           >
-            <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-top" />
+            <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-[50%_60%]" />
           </div>
           <span className="text-slate-400 text-sm">Ala NAJAR</span>
         </div>

@@ -69,7 +69,7 @@ export default function Navbar() {
           style={{ boxShadow: '0 0 0 2px #4f46e5' }}
           data-hover
         >
-          <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-top" />
+          <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-[50%_60%]" />
         </motion.button>
 
         {/* Desktop links */}

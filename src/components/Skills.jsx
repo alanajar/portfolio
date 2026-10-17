@@ -1,5 +1,9 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect, lazy, Suspense } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { HAS_WEBGL } from '../utils/performance'
+import { CODE_LINES } from '../utils/devCode'
+
+const DevScene = lazy(() => import('./DevScene'))
 
 const skillCategories = [
   {
@@ -166,6 +170,72 @@ function WireframeSphere() {
   )
 }
 
+// Version statique de la scène 3D (machines lentes ou pendant le chargement)
+function CodeWindow() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center px-4">
+      <div
+        className="w-full max-w-lg rounded-xl overflow-hidden text-left"
+        style={{ background: '#0d1117', border: '1px solid rgba(79,70,229,0.3)', boxShadow: '0 0 60px rgba(6,182,212,0.15)' }}
+      >
+        <div className="flex items-center gap-2 px-4 py-2" style={{ background: '#161b22' }}>
+          <span className="w-3 h-3 rounded-full" style={{ background: '#ff5f57' }} />
+          <span className="w-3 h-3 rounded-full" style={{ background: '#febc2e' }} />
+          <span className="w-3 h-3 rounded-full" style={{ background: '#28c840' }} />
+          <span className="ml-3 text-xs font-mono text-slate-400">developpeur.js</span>
+        </div>
+        <pre className="p-4 text-[11px] sm:text-xs leading-relaxed font-mono overflow-x-auto">
+          {CODE_LINES.map((line, i) => (
+            <div key={i}>
+              <span className="inline-block w-6 text-right mr-4 select-none" style={{ color: '#475569' }}>{i + 1}</span>
+              {line.map(([text, color], j) => (
+                <span key={j} style={{ color }}>{text}</span>
+              ))}
+            </div>
+          ))}
+        </pre>
+      </div>
+    </div>
+  )
+}
+
+// Scène 3D chargée seulement à l'approche de la section, mise en pause hors écran
+function DevShowcase() {
+  const ref = useRef(null)
+  const [near, setNear] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [use3D, setUse3D] = useState(HAS_WEBGL)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setVisible(entry.isIntersecting)
+        if (entry.isIntersecting) setNear(true)
+      },
+      { rootMargin: '200px' },
+    )
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className="relative h-[340px] sm:h-[420px] mb-14"
+      role="img"
+      aria-label="Ordinateur portable en 3D sur lequel du code s'écrit, entouré de mes technologies"
+    >
+      {use3D && near ? (
+        <Suspense fallback={<CodeWindow />}>
+          <DevScene active={visible} onFallback={() => setUse3D(false)} />
+        </Suspense>
+      ) : (
+        <CodeWindow />
+      )}
+    </div>
+  )
+}
+
 function SectionLabel({ children }) {
   return (
     <div className="flex items-center gap-3 mb-4">
@@ -204,6 +274,8 @@ export default function Skills() {
             Survolez les cartes pour découvrir mes niveaux de maîtrise.
           </p>
         </motion.div>
+
+        <DevShowcase />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
           {skillCategories.map((cat, i) => (

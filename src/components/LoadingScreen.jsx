@@ -45,7 +45,7 @@ export default function LoadingScreen({ onComplete }) {
               className="w-20 h-20 rounded-2xl overflow-hidden"
               style={{ boxShadow: '0 0 40px rgba(79,70,229,0.5), 0 0 0 2px #4f46e5' }}
             >
-              <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-top" />
+              <img src={photo} alt="Ala NAJAR" className="w-full h-full object-cover object-[50%_60%]" />
             </div>
           </motion.div>
 
