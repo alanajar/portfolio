@@ -28,8 +28,8 @@ const languages = [
   },
   {
     name: 'Italien',
-    level: 45,
-    label: 'Niveau B1',
+    level: 35,
+    label: 'Niveau A2',
     flag: '🇮🇹',
     cert: 'Scolaire',
     color: '#059669',

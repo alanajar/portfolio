@@ -27,6 +27,14 @@ const timeline = [
     detail: 'Parcours : Réalisation et Conception d\'Applications (RCDA)',
     color: '#4f46e5',
     icon: '🚀',
+  },
+  {
+    year: '2026 – 2027',
+    title: 'BUT Informatique 2ère année',
+    place: "IUT d'Arles — Aix-Marseille Université",
+    detail: 'Parcours : Réalisation et Conception d\'Applications (RCDA)',
+    color: '#4f46d8',
+    icon: '🚀',
     current: true,
   },
 ]
@@ -149,7 +157,7 @@ export default function About() {
           <p className="text-slate-400 text-sm mb-2">Étudiant BUT Informatique · RCDA</p>
           <div className="flex items-center justify-center gap-1">
             <MapPin size={13} className="text-cyan-400" />
-            <span className="text-xs text-slate-500">Avignon · Mobilité Aix-en-Provence</span>
+            <span className="text-xs text-slate-500">Arles · Mobilité </span>
           </div>
         </motion.div>
 
@@ -167,9 +175,9 @@ export default function About() {
             utiles et bien conçus.
           </p>
           <p className="text-slate-300 text-sm leading-relaxed">
-            Boursier d'excellence, j'ai choisi le parcours CDA du BUT Informatique pour
+            j'ai choisi le parcours RCDA du BUT Informatique pour
             me spécialiser dans la conception et le développement d'applications. Je recherche
-            une alternance pour mettre en pratique mes compétences dans un contexte professionnel.
+            un Stage pour mettre en pratique mes compétences dans un contexte professionnel.
           </p>
         </motion.div>
 
@@ -185,7 +193,7 @@ export default function About() {
             { icon: Phone, label: '07 43 57 16 40', href: 'tel:+33743571640' },
             { icon: Mail, label: 'alanajar9@gmail.com', href: 'mailto:alanajar9@gmail.com' },
             { icon: Github, label: 'github.com/alanajar', href: 'https://github.com/alanajar' },
-            { icon: MapPin, label: 'Avignon, France', href: null },
+            { icon: MapPin, label: 'Arles, France', href: null },
           ].map(({ icon: Icon, label, href }) => (
             <div
               key={label}
