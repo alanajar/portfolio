@@ -1,6 +1,5 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Canvas, useFrame } from '@react-three/fiber'
 
 const skillCategories = [
   {
@@ -152,23 +151,18 @@ function SkillCard({ category, index }) {
   )
 }
 
+// Sphère filaire en SVG (remplace un 2e contexte WebGL, bien trop coûteux pour un décor)
 function WireframeSphere() {
-  const ref = useRef()
-  useFrame((state) => {
-    if (!ref.current) return
-    ref.current.rotation.x = state.clock.elapsedTime * 0.2
-    ref.current.rotation.y = state.clock.elapsedTime * 0.3
-  })
   return (
-    <mesh ref={ref}>
-      <icosahedronGeometry args={[1.5, 1]} />
-      <meshStandardMaterial
-        color="#4f46e5"
-        emissive="#4f46e5"
-        emissiveIntensity={0.4}
-        wireframe
-      />
-    </mesh>
+    <svg viewBox="-50 -50 100 100" className="w-full h-full wireframe-spin" fill="none" stroke="#6366f1" strokeWidth="1.2">
+      <circle r="45" />
+      <ellipse rx="45" ry="15" />
+      <ellipse rx="45" ry="32" />
+      <ellipse rx="15" ry="45" />
+      <ellipse rx="32" ry="45" />
+      <line x1="-45" y1="0" x2="45" y2="0" />
+      <line x1="0" y1="-45" x2="0" y2="45" />
+    </svg>
   )
 }
 
@@ -190,11 +184,7 @@ export default function Skills() {
     <section id="skills" className="relative z-10 py-28" style={{ background: 'rgba(79,70,229,0.03)' }}>
       {/* Floating 3D wireframe */}
       <div className="absolute right-10 top-20 w-40 h-40 opacity-20 hidden lg:block float-animation">
-        <Canvas camera={{ position: [0, 0, 4] }} gl={{ alpha: true }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[3, 3, 3]} intensity={1} color="#4f46e5" />
-          <WireframeSphere />
-        </Canvas>
+        <WireframeSphere />
       </div>
 
       <div className="max-w-6xl mx-auto px-6">

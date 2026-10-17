@@ -24,8 +24,12 @@
     color: #f8fafc;
     font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
     overflow-x: hidden;
-    cursor: none;
   }
+
+  /* Curseur natif masqué seulement quand le curseur personnalisé est actif */
+  html.has-custom-cursor body,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button { cursor: none; }
 
   #root {
     width: 100%;
@@ -43,15 +47,17 @@
   /* Custom cursor */
   .custom-cursor {
     position: fixed;
+    top: 0;
+    left: 0;
     width: 24px;
     height: 24px;
     border: 2px solid #06b6d4;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
-    transform: translate(-50%, -50%);
+    transform: translate(-100px, -100px);
     transition: width 0.2s, height 0.2s, border-color 0.2s;
-    mix-blend-mode: difference;
+    will-change: transform;
   }
   .custom-cursor.hovering {
     width: 48px;
@@ -63,11 +69,14 @@
     position: fixed;
     width: 5px;
     height: 5px;
+    top: 0;
+    left: 0;
     background: #06b6d4;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
-    transform: translate(-50%, -50%);
+    transform: translate(-100px, -100px);
+    will-change: transform;
   }
 
   /* Gradient text */
@@ -84,11 +93,11 @@
     background-clip: text;
   }
 
-  /* Glass card */
+  /* Glass card — pas de backdrop-filter : quasi invisible sur fond sombre
+     et très coûteux sans accélération GPU */
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(10px);
   }
 
   /* Glow */
@@ -135,6 +144,7 @@
 
   /* Float animation */
   .float-animation { animation: float 4s ease-in-out infinite; }
+  .wireframe-spin { animation: spin 20s linear infinite; }
 
   /* Scroll indicator */
   .scroll-indicator { animation: scrollBounce 2s ease-in-out infinite; }
@@ -261,7 +271,16 @@
   }
 }
 
+/* Mode allégé (machines lentes / rendu logiciel) : pas d'animations infinies */
+html.low-perf .animate-pulse,
+html.low-perf .scroll-indicator,
+html.low-perf .float-animation,
+html.low-perf .wireframe-spin,
+html.low-perf .timeline-dot-pulse::before { animation: none; }
+html.low-perf { scroll-behavior: auto; }
+
 /* Keyframes (outside layers — they're global by nature) */
+@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 @keyframes progressFill { from { width: 0%; } to { width: var(--progress); } }
 @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }

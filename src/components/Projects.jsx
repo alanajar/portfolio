@@ -127,7 +127,7 @@ function Lightbox({ src, alt, onClose }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[9998] flex items-center justify-center p-4"
-        style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(8px)' }}
+        style={{ background: 'rgba(0,0,0,0.94)' }}
         onClick={onClose}
       >
         <button

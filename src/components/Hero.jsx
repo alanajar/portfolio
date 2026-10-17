@@ -2,8 +2,24 @@ import { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Github, Mail, ChevronDown, ExternalLink } from 'lucide-react'
 import { lazy, Suspense } from 'react'
+import { LOW_PERF } from '../utils/performance'
 
 const HeroScene = lazy(() => import('./HeroScene'))
+
+// Fond statique utilisé à la place de la scène 3D sur les machines lentes
+function StaticHeroBackground() {
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        background:
+          'radial-gradient(circle at 30% 35%, rgba(79,70,229,0.35) 0%, transparent 40%),' +
+          'radial-gradient(circle at 70% 65%, rgba(6,182,212,0.25) 0%, transparent 40%),' +
+          'radial-gradient(circle at 50% 50%, rgba(124,58,237,0.15) 0%, transparent 60%)',
+      }}
+    />
+  )
+}
 
 const WORDS = [
   'Développeur Fullstack',
@@ -58,6 +74,16 @@ function GlitchTitle({ text }) {
 }
 
 export default function Hero() {
+  const sectionRef = useRef(null)
+  const [visible, setVisible] = useState(true)
+  const [use3D, setUse3D] = useState(!LOW_PERF)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting))
+    observer.observe(sectionRef.current)
+    return () => observer.disconnect()
+  }, [])
+
   const scrollToProjects = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -67,15 +93,20 @@ export default function Hero() {
 
   return (
     <section
+      ref={sectionRef}
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{ background: '#0a0a0f' }}
     >
-      {/* 3D Scene */}
+      {/* 3D Scene (ou fond statique si la machine est trop lente) */}
       <div className="absolute inset-0 z-0">
-        <Suspense fallback={null}>
-          <HeroScene />
-        </Suspense>
+        {use3D ? (
+          <Suspense fallback={<StaticHeroBackground />}>
+            <HeroScene active={visible} onFallback={() => setUse3D(false)} />
+          </Suspense>
+        ) : (
+          <StaticHeroBackground />
+        )}
       </div>
 
       {/* Radial gradient overlay */}

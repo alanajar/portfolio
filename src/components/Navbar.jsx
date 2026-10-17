@@ -17,7 +17,9 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => {
+    let ticking = false
+    const update = () => {
+      ticking = false
       setScrolled(window.scrollY > 40)
       // Active section detection
       const sections = links.map(l => l.href.slice(1))
@@ -27,6 +29,13 @@ export default function Navbar() {
           setActive(sections[i])
           break
         }
+      }
+    }
+    // Au plus un calcul par frame, quel que soit le nombre d'événements scroll
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(update)
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -46,8 +55,7 @@ export default function Navbar() {
       transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled ? 'rgba(10,10,15,0.85)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
+        background: scrolled ? 'rgba(10,10,15,0.95)' : 'transparent',
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
       }}
     >
@@ -119,7 +127,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden overflow-hidden"
-            style={{ background: 'rgba(10,10,15,0.95)', backdropFilter: 'blur(20px)' }}
+            style={{ background: 'rgba(10,10,15,0.97)' }}
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map(({ label, href }) => (

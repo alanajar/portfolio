@@ -1,6 +1,6 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState, useLayoutEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Torus, Sphere } from '@react-three/drei'
+import { PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
 
 function AnimatedTorus() {
@@ -13,12 +13,11 @@ function AnimatedTorus() {
   })
   return (
     <mesh ref={ref}>
-      <torusGeometry args={[1.8, 0.4, 32, 100]} />
+      <torusGeometry args={[1.8, 0.4, 24, 64]} />
       <meshStandardMaterial
         color="#4f46e5"
         emissive="#4f46e5"
         emissiveIntensity={0.3}
-        wireframe={false}
         metalness={0.8}
         roughness={0.2}
       />
@@ -35,23 +34,17 @@ function AnimatedTorusWireframe() {
   })
   return (
     <mesh ref={ref}>
-      <torusGeometry args={[2.8, 0.12, 16, 80]} />
-      <meshStandardMaterial
-        color="#06b6d4"
-        emissive="#06b6d4"
-        emissiveIntensity={0.5}
-        wireframe={true}
-        transparent
-        opacity={0.5}
-      />
+      <torusGeometry args={[2.8, 0.12, 12, 64]} />
+      <meshBasicMaterial color="#06b6d4" wireframe transparent opacity={0.5} />
     </mesh>
   )
 }
 
+// Une seule InstancedMesh (1 draw call) au lieu de 12 meshes séparés
 function FloatingSpheres() {
+  const count = 12
   const spheres = useMemo(() => {
-    return Array.from({ length: 12 }, (_, i) => ({
-      id: i,
+    return Array.from({ length: count }, () => ({
       position: [
         (Math.random() - 0.5) * 8,
         (Math.random() - 0.5) * 8,
@@ -64,30 +57,36 @@ function FloatingSpheres() {
     }))
   }, [])
 
-  const refs = useRef(spheres.map(() => null))
+  const ref = useRef()
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+
+  useLayoutEffect(() => {
+    const color = new THREE.Color()
+    spheres.forEach((s, i) => ref.current.setColorAt(i, color.set(s.color)))
+    ref.current.instanceColor.needsUpdate = true
+  }, [spheres])
 
   useFrame((state) => {
-    refs.current.forEach((ref, i) => {
-      if (!ref) return
-      const s = spheres[i]
-      ref.position.y = s.position[1] + Math.sin(state.clock.elapsedTime * s.speed + s.offset) * 0.5
-      ref.position.x = s.position[0] + Math.cos(state.clock.elapsedTime * s.speed * 0.7 + s.offset) * 0.3
+    if (!ref.current) return
+    const t = state.clock.elapsedTime
+    spheres.forEach((s, i) => {
+      dummy.position.set(
+        s.position[0] + Math.cos(t * s.speed * 0.7 + s.offset) * 0.3,
+        s.position[1] + Math.sin(t * s.speed + s.offset) * 0.5,
+        s.position[2],
+      )
+      dummy.scale.setScalar(s.scale)
+      dummy.updateMatrix()
+      ref.current.setMatrixAt(i, dummy.matrix)
     })
+    ref.current.instanceMatrix.needsUpdate = true
   })
 
   return (
-    <>
-      {spheres.map((s, i) => (
-        <mesh key={s.id} ref={el => (refs.current[i] = el)} position={s.position} scale={s.scale}>
-          <sphereGeometry args={[1, 16, 16]} />
-          <meshStandardMaterial
-            color={s.color}
-            emissive={s.color}
-            emissiveIntensity={0.8}
-          />
-        </mesh>
-      ))}
-    </>
+    <instancedMesh ref={ref} args={[undefined, undefined, count]}>
+      <sphereGeometry args={[1, 12, 12]} />
+      <meshBasicMaterial />
+    </instancedMesh>
   )
 }
 
@@ -114,28 +113,34 @@ function Particles() {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial
-        size={0.05}
-        color="#7c3aed"
-        transparent
-        opacity={0.6}
-        sizeAttenuation
-      />
+      <pointsMaterial size={0.05} color="#7c3aed" transparent opacity={0.6} sizeAttenuation />
     </points>
   )
 }
 
-export default function HeroScene() {
+// active : false quand le hero n'est plus visible → la boucle de rendu s'arrête
+// onFallback : appelé si le FPS reste trop bas → le parent bascule sur un fond statique
+export default function HeroScene({ active = true, onFallback }) {
+  const [dpr, setDpr] = useState(1.25)
+
   return (
     <Canvas
       camera={{ position: [0, 0, 7], fov: 50 }}
       style={{ position: 'absolute', inset: 0 }}
-      gl={{ antialias: true, alpha: true }}
+      dpr={dpr}
+      frameloop={active ? 'always' : 'never'}
+      gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
     >
+      <PerformanceMonitor
+        onIncline={() => setDpr(1.5)}
+        onDecline={() => setDpr(1)}
+        flipflops={3}
+        onFallback={onFallback}
+      />
+
       <ambientLight intensity={0.5} />
       <pointLight position={[5, 5, 5]} intensity={1.5} color="#4f46e5" />
       <pointLight position={[-5, -5, 5]} intensity={1} color="#06b6d4" />
-      <pointLight position={[0, 0, 3]} intensity={0.5} color="#7c3aed" />
 
       <AnimatedTorus />
       <AnimatedTorusWireframe />

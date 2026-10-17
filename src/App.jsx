@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, MotionConfig } from 'framer-motion'
 
 import Cursor from './components/Cursor'
 import LoadingScreen from './components/LoadingScreen'
@@ -21,7 +21,7 @@ export default function App() {
   }, [])
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <Cursor />
 
       <AnimatePresence>
@@ -43,6 +43,6 @@ export default function App() {
           <Footer />
         </div>
       )}
-    </>
+    </MotionConfig>
   )
 }
