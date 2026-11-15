@@ -1,13 +1,37 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useInView, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
-import { Github, X, Play, Image as ImageIcon, FileText, ArrowUpRight, Film } from 'lucide-react'
+import {
+  Github,
+  Gitlab,
+  Lock,
+  X,
+  Play,
+  Images,
+  FileText,
+  ArrowUpRight,
+  Film,
+  ChevronLeft,
+  ChevronRight,
+  CircleCheck,
+} from 'lucide-react'
 import { LOW_PERF } from '../utils/performance'
 import imgBiblio from '../assets/biblio.png'
 import imgS104 from '../assets/s1.04_manipulation_de_base_de_donn-e.png'
 import imgSiteAmu from '../assets/site_amu.png'
 import imgTodo from '../assets/mon_to_do_list.png'
 import pdfReport from '../assets/report.pdf'
+import imgCgCover from '../assets/projects/cgshop-cover.webp'
+import imgCgInstance from '../assets/projects/cgshop-1-instance-page.webp'
+import imgCgSolution from '../assets/projects/cgshop-2-solution-page-3-cutters.webp'
+import imgCgBroken from '../assets/projects/cgshop-4-solution-broken-uncovered-red.webp'
+import imgCgUml from '../assets/projects/cgshop-class-diagram.webp'
+import imgRouteTrajet from '../assets/projects/temps-route-trajet.webp'
+import imgRouteCarte from '../assets/projects/temps-route-carte.webp'
+import imgEtudiants from '../assets/projects/gestion-etudiants.webp'
+import imgMeteoPopup from '../assets/projects/meteojs-popup.webp'
+import imgMeteoListe from '../assets/projects/meteojs-liste.webp'
+import imgPolynome from '../assets/projects/polynome-doc.webp'
 
 const LANGUAGE_COLORS = {
   JavaScript: '#f7df1e',
@@ -26,6 +50,16 @@ const LANGUAGE_COLORS = {
   Sage: '#6a9a4d',
   Bootstrap: '#7952b3',
   React: '#61dafb',
+  Qt: '#41cd52',
+  CMake: '#064f8c',
+  SVG: '#ffb13b',
+  JSON: '#cbcb41',
+  XML: '#0060ac',
+  Webpack: '#8dd6f9',
+  Sass: '#cc6699',
+  'API REST': '#22d3ee',
+  Doxygen: '#2c4aa8',
+  Boost: '#e17f2b',
   Default: '#6b7280',
 }
 
@@ -36,20 +70,105 @@ const LANGUAGE_COLORS = {
 //                           (import videoBiblio from '../assets/videos/biblio.mp4')
 //                           puis  video: videoBiblio
 // Tant que `video` vaut null, la carte affiche « Démo vidéo bientôt disponible ».
+//
+// Captures : `images` est une liste de { src, caption } (la première sert de
+// couverture si `cover` n'est pas précisé). `repo` = { url, host: 'github' | 'gitlab' }
+// ou { private: true } pour un dépôt privé.
+//
+// Les projets sont rangés du plus exigeant au plus simple.
 // ─────────────────────────────────────────────────────────────────────────────
 const PROJECTS = [
   {
-    id: 'bibliotheque-cpp',
-    tag: 'SAÉ S1.01',
-    title: 'Gestion de Bibliothèque',
-    languages: ['C++', 'Makefile'],
+    id: 'cgshop-2027',
+    tag: 'SAÉ S3 · En cours',
+    title: 'CG:SHOP 2027 — Visualiseur de robots tondeuses',
+    languages: ['C++', 'CMake', 'SVG', 'JavaScript', 'JSON'],
     description:
-      "Application console de gestion de bibliothèque en C++. Structure avec dossiers séparés pour les fichiers source (.cpp) et les headers (.hpp).",
-    github: 'https://github.com/alanajar/biblioth-quec-',
-    image: imgBiblio,
+      "Outil C++ en ligne de commande qui transforme les instances et solutions du challenge international CG:SHOP 2027 (Multi-Robot Lawn Mowing dans des polyominos) en dessins SVG, animations et site web statique. Projet d'équipe de 5 étudiants encadré par un chercheur.",
+    highlights: [
+      'Lecture des instances et solutions JSON officielles du concours (pelouses de plus de 50 000 cellules, avec trous)',
+      'Rendu SVG des pelouses, des formes de robots et des tournées de chaque robot',
+      'Calcul du score (longueur de la plus longue tournée) et détection des zones non couvertes, affichées en rouge',
+      'Commandes CLI : instance, solution, list, score, uncovered',
+      'Travail en équipe : sprints, diagramme UML, intégration continue GitLab, feuille de temps',
+    ],
+    repo: { private: true },
+    cover: imgCgCover,
+    images: [
+      { src: imgCgSolution, tall: true, caption: 'Solution avec 3 robots : chaque couleur est la tournée d’un robot' },
+      { src: imgCgBroken, tall: true, caption: 'Solution invalide : la zone non couverte est détectée et affichée en rouge' },
+      { src: imgCgInstance, tall: true, caption: 'Page d’une instance : pelouse de 56 876 cellules avec 33 trous' },
+      { src: imgCgUml, caption: 'Diagramme de classes (fin du sprint 2)' },
+    ],
     video: null,
-    accent: '#f43f5e',
-    emoji: '📚',
+    accent: '#22c55e',
+    emoji: '🤖',
+    featured: true,
+  },
+  {
+    id: 'temps-de-route',
+    tag: 'SAÉ S2.02',
+    title: 'Temps de route — Graphe des villes de France',
+    languages: ['C++', 'Qt'],
+    description:
+      "Application Qt 6 qui charge 100 villes et 542 liaisons, calcule tous les plus courts chemins avec Floyd-Warshall et les affiche sur une carte interactive (zoom à la molette, info-bulles).",
+    highlights: [
+      'Algorithme de Floyd-Warshall et reconstruction du trajet ville par ville',
+      'Recherche du dépôt optimal : la ville qui minimise la somme des temps vers les autres',
+      'Tableau des temps de trajet, filtres par région et tri par population',
+      'Carte dessinée avec QPainter : projection des coordonnées, zoom centré sur la souris',
+    ],
+    repo: { url: 'https://github.com/alanajar/Temps_De_Route_France_QT', host: 'github' },
+    images: [
+      { src: imgRouteTrajet, caption: 'Trajet Brest → Nice : 12 h 13, 10 villes traversées' },
+      { src: imgRouteCarte, caption: 'Vue d’ensemble du graphe : 100 villes et 542 liaisons' },
+    ],
+    video: null,
+    accent: '#ef4444',
+    emoji: '🗺️',
+  },
+  {
+    id: 'gestion-etudiants',
+    tag: 'SAÉ S2.01',
+    title: 'Gestionnaire d’étudiants (Qt)',
+    languages: ['C++', 'Qt', 'JSON', 'XML'],
+    description:
+      "Application de bureau en C++ / Qt 6 pour gérer des fiches étudiants en mode maître / détail : chargement et sauvegarde JSON et XML, absences, recherche et traduction de l’interface. Réalisée en binôme.",
+    highlights: [
+      'Lecture et écriture JSON et XML',
+      'Ajout, modification et suppression de fiches, avec photo',
+      'Sous-formulaire des absences (date, justifiée, motif)',
+      'Recherche par nom, prénom ou numéro étudiant',
+      'Interface en anglais, français et arabe (Qt Linguist)',
+    ],
+    repo: { url: 'https://github.com/alanajar/application_Gestion_Etudiant_QT', host: 'github' },
+    images: [{ src: imgEtudiants, caption: 'Fiche d’un étudiant avec ses absences (interface en français)' }],
+    video: null,
+    accent: '#0ea5e9',
+    emoji: '🎓',
+  },
+  {
+    id: 'meteojs',
+    tag: 'R3.01 · Dev web',
+    title: 'MétéoJS — To-do list avec météo',
+    languages: ['JavaScript', 'API REST', 'Webpack', 'Sass'],
+    description:
+      "To-do list en JavaScript orienté objet : tâches de travail, de déplacement et de loisir, triées par date et sauvegardées en local. Pour les déplacements et les loisirs, l’application affiche la météo de la ville sur 5 jours. Un calendrier montre les tâches et les jours fériés.",
+    highlights: [
+      'API OpenWeatherMap : géocodage de la ville, puis prévisions sur 5 jours (appels fetch enchaînés)',
+      'API calendrier.api.gouv.fr pour les jours fériés',
+      'POO : classes Tache, TacheDeplacement et TacheLoisir (héritage), GestionnaireTaches, Interface, Calendrier',
+      'Sauvegarde dans le localStorage, filtres par type, nombre de jours restants',
+      'Build Webpack + Babel + Sass, clé d’API dans un fichier .env',
+    ],
+    repo: { url: 'https://etulab.univ-amu.fr/n25027444/meteojs', host: 'gitlab' },
+    images: [
+      { src: imgMeteoPopup, caption: 'Météo en direct pour Arles avec les prévisions sur 5 jours' },
+      { src: imgMeteoListe, caption: 'Liste des tâches avec la météo du jour prévu' },
+    ],
+    video: null,
+    accent: '#a855f7',
+    emoji: '🌦️',
   },
   {
     id: 'algorithmes-tri',
@@ -58,11 +177,42 @@ const PROJECTS = [
     languages: ['C++', 'Python', 'Jupyter Notebook', 'Sage', 'Shell'],
     description:
       "Comparaison de six algorithmes de tri (bulle, insertion, sélection, quicksort, quicksort aléatoire, std::sort) sur des tableaux de 1 000 à 100 000 éléments. Mesure du temps et du nombre de comparaisons.",
-    github: 'https://github.com/alanajar/S1.02-D-monstration-d-algorithmes',
+    repo: { url: 'https://github.com/alanajar/S1.02-D-monstration-d-algorithmes', host: 'github' },
     pdf: pdfReport,
     video: null,
     accent: '#8b5cf6',
     emoji: '📊',
+  },
+  {
+    id: 'bibliotheque-cpp',
+    tag: 'SAÉ S1.01',
+    title: 'Gestion de Bibliothèque',
+    languages: ['C++', 'Makefile'],
+    description:
+      "Application console de gestion de bibliothèque en C++. Structure avec dossiers séparés pour les fichiers source (.cpp) et les headers (.hpp).",
+    repo: { url: 'https://github.com/alanajar/biblioth-quec-', host: 'github' },
+    images: [{ src: imgBiblio, caption: 'Application console de gestion de bibliothèque' }],
+    video: null,
+    accent: '#f43f5e',
+    emoji: '📚',
+  },
+  {
+    id: 'polynome-cpp',
+    tag: 'R2.03 · Qualité de dev',
+    title: 'Classe Polynôme en C++',
+    languages: ['C++', 'Boost', 'Doxygen', 'Makefile'],
+    description:
+      "Classe Polynome développée à 5 avec un suivi des tâches dans le README : surcharge d’opérateurs, dérivée, primitive, tests unitaires Boost.Test et documentation générée avec Doxygen.",
+    highlights: [
+      'Mes parties : constructeur de copie, accesseur du degré, operator<<, operator(), operator==, test de la dérivée',
+      'Opérateurs + − * = [] et comparaison',
+      'Tests unitaires Boost.Test et Makefile commun',
+    ],
+    repo: { url: 'https://github.com/alanajar/Polynome-CPP', host: 'github' },
+    images: [{ src: imgPolynome, caption: 'Documentation Doxygen de la classe Polynome' }],
+    video: null,
+    accent: '#3b82f6',
+    emoji: '🧮',
   },
   {
     id: 'base-de-donnees',
@@ -71,8 +221,8 @@ const PROJECTS = [
     languages: ['SQL'],
     description:
       "Travaux pratiques de base de données relationnelle PostgreSQL. Modélisation, normalisation et requêtes avancées sur une base commerciale (clients, articles, commandes, livraisons).",
-    github: 'https://github.com/alanajar/s1.04_manipulation_de_base_de_donn-e',
-    image: imgS104,
+    repo: { url: 'https://github.com/alanajar/s1.04_manipulation_de_base_de_donn-e', host: 'github' },
+    images: [{ src: imgS104, caption: 'Modèle de la base de données' }],
     video: null,
     accent: '#06b6d4',
     emoji: '🗄️',
@@ -84,8 +234,8 @@ const PROJECTS = [
     languages: ['HTML', 'CSS', 'Bootstrap'],
     description:
       "Site vitrine présentant le BUT Informatique du site d'Arles (IUT Aix-Marseille). Présentation de la formation, compétences, parcours, métiers et SAÉ.",
-    github: 'https://github.com/alanajar/site_pour_amu',
-    image: imgSiteAmu,
+    repo: { url: 'https://github.com/alanajar/site_pour_amu', host: 'github' },
+    images: [{ src: imgSiteAmu, caption: 'Page d’accueil du site vitrine' }],
     video: null,
     accent: '#6366f1',
     emoji: '🌐',
@@ -97,8 +247,8 @@ const PROJECTS = [
     languages: ['TypeScript', 'React', 'JavaScript', 'CSS'],
     description:
       "Application de gestion de tâches développée avec React et TypeScript. Interface moderne avec Vite comme bundler.",
-    github: 'https://github.com/alanajar/mon_to_do_list',
-    image: imgTodo,
+    repo: { url: 'https://github.com/alanajar/mon_to_do_list', host: 'github' },
+    images: [{ src: imgTodo, caption: 'Application To-Do List' }],
     video: null,
     accent: '#f59e0b',
     emoji: '✅',
@@ -108,10 +258,37 @@ const PROJECTS = [
 const FILTERS = [
   { label: 'Tous', match: () => true },
   { label: 'C / C++', match: (p) => p.languages.some((l) => l === 'C++' || l === 'C') },
+  { label: 'Qt', match: (p) => p.languages.includes('Qt') },
+  { label: 'Web / JS', match: (p) => p.languages.some((l) => ['HTML', 'CSS', 'React', 'TypeScript', 'JavaScript'].includes(l)) },
   { label: 'Python', match: (p) => p.languages.includes('Python') },
   { label: 'Bases de données', match: (p) => p.languages.includes('SQL') },
-  { label: 'Web', match: (p) => p.languages.some((l) => ['HTML', 'CSS', 'React', 'TypeScript'].includes(l)) },
 ]
+
+const coverOf = (project) => project.cover || project.images?.[0]?.src || null
+
+const REPO_HOSTS = {
+  github: { icon: Github, name: 'GitHub' },
+  gitlab: { icon: Gitlab, name: 'GitLab' },
+}
+
+function RepoButton({ project }) {
+  const { repo } = project
+  if (repo.private) {
+    return (
+      <span className="btn-outline opacity-80 cursor-default" title="Le code sera publié à la fin du projet">
+        <Lock size={15} />
+        Dépôt privé — projet en cours
+      </span>
+    )
+  }
+  const { icon: Icon, name } = REPO_HOSTS[repo.host]
+  return (
+    <a href={repo.url} target="_blank" rel="noopener noreferrer" className="btn-primary" data-hover>
+      <Icon size={15} />
+      Voir le code sur {name}
+    </a>
+  )
+}
 
 function youtubeId(url) {
   const m = typeof url === 'string' && url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)
@@ -175,7 +352,7 @@ function VideoPlayer({ project }) {
   return (
     <video
       src={project.video}
-      poster={project.image}
+      poster={coverOf(project)}
       controls
       playsInline
       preload="metadata"
@@ -185,16 +362,88 @@ function VideoPlayer({ project }) {
   )
 }
 
+// ─── Galerie de captures ─────────────────────────────────────────────────────
+
+function Gallery({ project, index, setIndex }) {
+  const images = project.images
+  const current = images[index]
+  const many = images.length > 1
+  const go = (step) => setIndex((index + step + images.length) % images.length)
+
+  return (
+    <div>
+      <div className="relative rounded-xl overflow-hidden bg-black/40" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+        {/* Les captures très verticales (pages entières) défilent au lieu d'être réduites */}
+        <div key={current.src} className={current.tall ? 'max-h-[60vh] overflow-y-auto' : ''}>
+          <a href={current.src} target="_blank" rel="noopener noreferrer" data-hover>
+            <img
+              src={current.src}
+              alt={current.caption}
+              className={current.tall ? 'w-full h-auto' : 'w-full max-h-[60vh] object-contain'}
+            />
+          </a>
+        </div>
+        {many && (
+          <>
+            <button
+              onClick={() => go(-1)}
+              aria-label="Capture précédente"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center text-white backdrop-blur-md"
+              style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.15)' }}
+              data-hover
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={() => go(1)}
+              aria-label="Capture suivante"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center text-white backdrop-blur-md"
+              style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.15)' }}
+              data-hover
+            >
+              <ChevronRight size={18} />
+            </button>
+          </>
+        )}
+      </div>
+      <p className="text-slate-400 text-xs mt-2 text-center">
+        {current.caption}
+        {many && <span className="text-slate-600"> · {index + 1} / {images.length}</span>}
+      </p>
+      {many && (
+        <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+          {images.map((img, i) => (
+            <button
+              key={img.src}
+              onClick={() => setIndex(i)}
+              aria-label={img.caption}
+              className="shrink-0 w-20 h-14 rounded-lg overflow-hidden transition-opacity"
+              style={{
+                border: `2px solid ${i === index ? project.accent : 'transparent'}`,
+                opacity: i === index ? 1 : 0.55,
+              }}
+              data-hover
+            >
+              <img src={img.src} alt="" className="w-full h-full object-cover object-top" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Fenêtre de détail d'un projet ──────────────────────────────────────────
 
 function ProjectModal({ project, onClose }) {
   const tabs = [
     { id: 'video', label: 'Vidéo', icon: Play },
-    project.image && { id: 'image', label: 'Aperçu', icon: ImageIcon },
+    project.images?.length && { id: 'images', label: 'Captures', icon: Images },
     project.pdf && { id: 'pdf', label: 'Rapport', icon: FileText },
   ].filter(Boolean)
   // Ouvre directement sur la vidéo si elle existe, sinon sur le premier contenu disponible
   const [tab, setTab] = useState(project.video || tabs.length === 1 ? 'video' : tabs[1].id)
+  const [imageIndex, setImageIndex] = useState(0)
   const closeRef = useRef(null)
 
   useEffect(() => {
@@ -208,6 +457,18 @@ function ProjectModal({ project, onClose }) {
       window.removeEventListener('keydown', onKey)
     }
   }, [onClose])
+
+  // Flèches gauche / droite pour parcourir les captures
+  useEffect(() => {
+    const n = project.images?.length || 0
+    if (tab !== 'images' || n < 2) return
+    const onKey = (e) => {
+      if (e.key === 'ArrowRight') setImageIndex((i) => (i + 1) % n)
+      if (e.key === 'ArrowLeft') setImageIndex((i) => (i - 1 + n) % n)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [tab, project.images])
 
   return createPortal(
     <motion.div
@@ -281,16 +542,7 @@ function ProjectModal({ project, onClose }) {
 
           <div className="mb-6">
             {tab === 'video' && <VideoPlayer project={project} />}
-            {tab === 'image' && (
-              <a href={project.image} target="_blank" rel="noopener noreferrer" data-hover>
-                <img
-                  src={project.image}
-                  alt={`Capture — ${project.title}`}
-                  className="w-full max-h-[60vh] object-contain rounded-xl bg-black/40"
-                  style={{ border: '1px solid rgba(255,255,255,0.08)' }}
-                />
-              </a>
-            )}
+            {tab === 'images' && <Gallery project={project} index={imageIndex} setIndex={setImageIndex} />}
             {tab === 'pdf' && (
               <embed
                 src={project.pdf}
@@ -302,15 +554,22 @@ function ProjectModal({ project, onClose }) {
           </div>
 
           <p className="text-slate-300 leading-relaxed mb-5">{project.description}</p>
+          {project.highlights && (
+            <ul className="space-y-2 mb-6">
+              {project.highlights.map((h) => (
+                <li key={h} className="flex gap-2.5 text-sm text-slate-300 leading-relaxed">
+                  <CircleCheck size={16} className="shrink-0 mt-0.5" style={{ color: project.accent }} />
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="flex flex-wrap gap-2 mb-6">
             {project.languages.map((lang) => (
               <LanguageBadge key={lang} lang={lang} />
             ))}
           </div>
-          <a href={project.github} target="_blank" rel="noopener noreferrer" className="btn-primary" data-hover>
-            <Github size={15} />
-            Voir le code source
-          </a>
+          <RepoButton project={project} />
         </div>
       </motion.div>
     </motion.div>,
@@ -328,6 +587,9 @@ function ProjectCard({ project, index, onOpen }) {
   const rotateY = useSpring(useMotionValue(0), { stiffness: 200, damping: 20 })
   const [spot, setSpot] = useState({ x: 50, y: 50 })
   const hasFileVideo = isFileVideo(project.video)
+  const cover = coverOf(project)
+  const nbImages = project.images?.length || 0
+  const RepoIcon = project.repo.private ? Lock : REPO_HOSTS[project.repo.host].icon
 
   const onMove = (e) => {
     if (!canTilt) return
@@ -361,7 +623,7 @@ function ProjectCard({ project, index, onOpen }) {
       onMouseMove={onMove}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      className="group relative rounded-2xl p-px cursor-pointer"
+      className={`group relative rounded-2xl p-px cursor-pointer ${project.featured ? 'lg:col-span-2' : ''}`}
       onClick={() => onOpen(project)}
       data-hover
     >
@@ -379,13 +641,13 @@ function ProjectCard({ project, index, onOpen }) {
         />
 
         {/* Média */}
-        <div className="relative aspect-video overflow-hidden">
-          {project.image ? (
+        <div className={`relative overflow-hidden ${project.featured ? 'aspect-video lg:aspect-[21/9]' : 'aspect-video'}`}>
+          {cover ? (
             <img
-              src={project.image}
+              src={cover}
               alt=""
               loading="lazy"
-              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              className={`w-full h-full object-cover ${project.featured ? 'object-center' : 'object-top'} transition-transform duration-700 group-hover:scale-105`}
             />
           ) : (
             <div
@@ -415,17 +677,36 @@ function ProjectCard({ project, index, onOpen }) {
           {/* Badges */}
           <span
             className="absolute top-3 left-3 text-[11px] font-mono px-2.5 py-1 rounded-full backdrop-blur-md"
-            style={{ background: 'rgba(0,0,0,0.5)', color: project.accent, border: `1px solid ${project.accent}55` }}
+            style={{ background: 'rgba(0,0,0,0.75)', color: project.accent, border: `1px solid ${project.accent}55` }}
           >
             {project.tag}
           </span>
           <span
             className="absolute top-3 right-3 text-[11px] px-2.5 py-1 rounded-full backdrop-blur-md flex items-center gap-1"
-            style={{ background: 'rgba(0,0,0,0.5)', color: project.video ? '#fff' : '#94a3b8', border: '1px solid rgba(255,255,255,0.15)' }}
+            style={{ background: 'rgba(0,0,0,0.75)', color: project.video || nbImages ? '#fff' : '#94a3b8', border: '1px solid rgba(255,255,255,0.15)' }}
           >
-            {project.video ? <Play size={11} fill="currentColor" /> : <Film size={11} />}
-            {project.video ? 'Démo vidéo' : 'Vidéo bientôt'}
+            {project.video ? (
+              <>
+                <Play size={11} fill="currentColor" /> Démo vidéo
+              </>
+            ) : nbImages ? (
+              <>
+                <Images size={11} /> {nbImages} capture{nbImages > 1 ? 's' : ''}
+              </>
+            ) : (
+              <>
+                <Film size={11} /> Vidéo bientôt
+              </>
+            )}
           </span>
+          {project.featured && (
+            <span
+              className="absolute bottom-3 left-3 z-[1] text-[11px] font-semibold px-2.5 py-1 rounded-full"
+              style={{ background: project.accent, color: '#04140a' }}
+            >
+              ★ Projet phare
+            </span>
+          )}
 
           {/* Bouton lecture au survol */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -433,7 +714,11 @@ function ProjectCard({ project, index, onOpen }) {
               className="w-14 h-14 rounded-full flex items-center justify-center backdrop-blur-md scale-75 group-hover:scale-100 transition-transform duration-300"
               style={{ background: project.accent + 'cc', boxShadow: `0 0 30px ${project.accent}88` }}
             >
-              <Play size={22} className="text-white ml-0.5" fill="currentColor" />
+              {project.video ? (
+                <Play size={22} className="text-white ml-0.5" fill="currentColor" />
+              ) : (
+                <Images size={22} className="text-white" />
+              )}
             </div>
           </div>
         </div>
@@ -459,18 +744,28 @@ function ProjectCard({ project, index, onOpen }) {
               Voir le projet
               <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </span>
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              aria-label={`Code source de ${project.title} sur GitHub`}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-              data-hover
-            >
-              <Github size={16} />
-            </a>
+            {project.repo.private ? (
+              <span
+                title="Dépôt privé — projet en cours"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-slate-500"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                <RepoIcon size={16} />
+              </span>
+            ) : (
+              <a
+                href={project.repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`Code source de ${project.title} sur ${REPO_HOSTS[project.repo.host].name}`}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                data-hover
+              >
+                <RepoIcon size={16} />
+              </a>
+            )}
           </div>
         </div>
       </div>
