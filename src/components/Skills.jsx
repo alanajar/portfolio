@@ -5,17 +5,35 @@ import { CODE_LINES } from '../utils/devCode'
 
 const DevScene = lazy(() => import('./DevScene'))
 
+// Niveaux indicatifs : à ajuster selon ton ressenti.
 const skillCategories = [
   {
     title: 'Langages',
     color: '#4f46e5',
     icon: '⚡',
     skills: [
+      { name: 'C / C++', level: 75, icon: '⚙️' },
       { name: 'Python', level: 75, icon: '🐍' },
-      { name: 'C / C++', level: 70, icon: '⚙️' },
-      { name: 'JavaScript', level: 65, icon: '🟡' },
+      { name: 'JavaScript', level: 70, icon: '🟡' },
+      { name: 'HTML / CSS', level: 75, icon: '🌐' },
+      { name: 'SQL', level: 70, icon: '📋' },
+      { name: 'Java', level: 50, icon: '☕' },
+      { name: 'TypeScript', level: 45, icon: '🔷' },
       { name: 'PHP', level: 55, icon: '🐘' },
-      { name: 'Flutter ', level: 20, icon: '💙' },
+    ],
+  },
+  {
+    title: 'Frameworks & bibliothèques',
+    color: '#ec4899',
+    icon: '🧩',
+    skills: [
+      { name: 'Qt 6', level: 65, icon: '🖥️' },
+      { name: 'JavaFX', level: 40, icon: '🪟' },
+      { name: 'React', level: 55, icon: '⚛️' },
+      { name: 'Bootstrap', level: 60, icon: '🅱️' },
+      { name: 'Tailwind CSS', level: 50, icon: '🌬️' },
+      { name: 'Sass', level: 45, icon: '🎨' },
+      { name: 'Three.js', level: 30, icon: '🧊' },
     ],
   },
   {
@@ -24,19 +42,21 @@ const skillCategories = [
     icon: '🏗️',
     skills: [
       { name: 'POO', level: 80, icon: '🔷' },
-      { name: 'UML', level: 70, icon: '📐' },
+      { name: 'Algorithmique & graphes', level: 75, icon: '🧠' },
+      { name: 'UML / PlantUML', level: 70, icon: '📐' },
       { name: 'Merise', level: 65, icon: '📊' },
-      { name: 'Algorithmique', level: 75, icon: '🧠' },
+      { name: 'API REST', level: 60, icon: '🔌' },
     ],
   },
   {
-    title: 'Bases de données',
+    title: 'Données',
     color: '#7c3aed',
     icon: '🗄️',
     skills: [
       { name: 'PostgreSQL', level: 70, icon: '🐘' },
       { name: 'MySQL', level: 65, icon: '🐬' },
-      { name: 'SQL avancé', level: 70, icon: '📋' },
+      { name: 'JSON / XML', level: 70, icon: '📄' },
+      { name: 'Jupyter / SageMath', level: 60, icon: '📓' },
     ],
   },
   {
@@ -45,19 +65,24 @@ const skillCategories = [
     icon: '🛠️',
     skills: [
       { name: 'Git / GitHub', level: 75, icon: '🔀' },
+      { name: 'GitLab & CI', level: 50, icon: '🦊' },
       { name: 'Linux / Shell', level: 65, icon: '🐧' },
+      { name: 'CMake / Make', level: 55, icon: '🔧' },
+      { name: 'Webpack / Vite', level: 50, icon: '📦' },
+      { name: 'Postman', level: 40, icon: '📮' },
       { name: 'Docker', level: 20, icon: '🐳' },
-      { name: 'Postman', level: 20, icon: '📮' },
-      { name: 'Trello', level: 20, icon: '📌' },
     ],
   },
   {
-    title: 'Méthodologies',
+    title: 'Méthodes & qualité',
     color: '#d97706',
     icon: '📋',
     skills: [
       { name: 'Scrum / Agile', level: 70, icon: '🔄' },
+      { name: 'Tests unitaires', level: 55, icon: '✅' },
+      { name: 'Doxygen', level: 55, icon: '📚' },
       { name: 'CRISP-DM', level: 55, icon: '📈' },
+      { name: 'Trello', level: 50, icon: '📌' },
     ],
   },
 ]
@@ -84,6 +109,8 @@ function SkillCard({ category, index }) {
     <motion.div
       ref={ref}
       className="skill-card-container h-full"
+      tabIndex={0}
+      aria-label={`${category.title} : ${category.skills.map((s) => s.name).join(', ')}`}
       initial={{ opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -122,14 +149,14 @@ function SkillCard({ category, index }) {
             className="text-xs mt-4"
             style={{ color: category.color + 'aa' }}
           >
-            Retournez pour voir les niveaux →
+            Survolez pour voir les niveaux →
           </p>
         </div>
 
         {/* Back */}
         <div
           className="skill-card-back glass-card rounded-2xl p-6"
-          style={{ borderColor: category.color + '44', background: category.color + '08' }}
+          style={{ borderColor: category.color + '44', backgroundImage: `linear-gradient(${category.color}14, ${category.color}14)` }}
         >
           <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
             <span>{category.icon}</span> {category.title}

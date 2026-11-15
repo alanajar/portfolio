@@ -119,22 +119,40 @@
   .skill-card-container {
     perspective: 1000px;
   }
+  /* Les deux faces sont empilées dans la même cellule de grille : la carte prend
+     la hauteur de la plus grande, rien ne déborde. Fond opaque + fondu à mi-rotation
+     pour qu'on ne voie jamais les deux faces en même temps (Firefox compris). */
   .skill-card-inner {
+    display: grid;
     transition: transform 0.6s;
     transform-style: preserve-3d;
-    position: relative;
   }
-  .skill-card-container:hover .skill-card-inner {
+  .skill-card-container:hover .skill-card-inner,
+  .skill-card-container:focus-within .skill-card-inner {
     transform: rotateY(180deg);
   }
   .skill-card-front, .skill-card-back {
+    grid-area: 1 / 1;
+    background-color: #12121b;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    transition: opacity 0s linear 0.3s;
   }
   .skill-card-back {
     transform: rotateY(180deg);
-    position: absolute;
-    inset: 0;
+    opacity: 0;
+  }
+  .skill-card-container:hover .skill-card-front,
+  .skill-card-container:focus-within .skill-card-front {
+    opacity: 0;
+  }
+  .skill-card-container:hover .skill-card-back,
+  .skill-card-container:focus-within .skill-card-back {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skill-card-inner { transition: none; }
+    .skill-card-front, .skill-card-back { transition: none; }
   }
 
   /* Progress bar animation */
